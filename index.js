@@ -41,14 +41,14 @@ const determineGeminiModel = (key) => {
 };
 
 // memanggil middleware untuk bisa handle CORS
-// app.use(cors);
+app.use(cors());
 
 // memanggil middleware untuk bisa terima header
 // dengan Content-Type: application/json
 app.use(express.json());
 
 // panggil middleware untuk serve static file
-// app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_AI_STUDIO_KEY,
@@ -56,9 +56,9 @@ const ai = new GoogleGenAI({
 
 // memanggil middleware untuk bisa terima header dengan Content-Type: application/json
 
-app.get("/", async (req, res) => {
-  res.send("Hello World!");
-});
+// app.get("/", async (req, res) => {
+//   res.send("Hello World!");
+// });
 
 app.post("/generate-text", async (req, res) => {
   try {
@@ -118,19 +118,19 @@ app.post("/chat", async (req, res) => {
       res.status(400).json({ message: "Body is required" });
     }
 
-    const { message } = req.body;
+    const { messages } = req.body;
 
-    if (!message) {
+    if (!messages) {
       res.status(400).json({ message: "Message is required" });
       return;
     }
 
-    if (!Array.isArray(message)) {
+    if (!Array.isArray(messages)) {
       res.status(400).json({ message: "Message must be an array" });
       return;
     }
 
-    const payload = message.map((msg) => {
+    const payload = messages.map((msg) => {
       return {
         role: msg.role,
         parts: [
